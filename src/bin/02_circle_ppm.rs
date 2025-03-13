@@ -1,11 +1,11 @@
 use raytracer::math::Vector2;
-use raytracer::ppm::{Pixel, PpmP3};
+use raytracer::ppm::{Pixel, PpmImage};
 use std::error::Error;
 
 fn main() -> Result<(), Box<dyn Error>> {
     let width = 64;
     let height = 48;
-    let mut ppm = PpmP3::new(width, height);
+    let mut ppm = PpmImage::new(width, height);
 
     let origin = Vector2::new(width as f64, height as f64).scale(0.5);
     let radius = 5.;
@@ -23,15 +23,8 @@ fn main() -> Result<(), Box<dyn Error>> {
                 Pixel::BLACK
             };
 
-            match ppm.get_mut_pixel(x, y) {
-                None => {
-                    dbg!(x);
-                    dbg!(y);
-                }
-                Some(p) => {
-                    *p = pixel;
-                }
-            }
+            let mut pixel_ref = ppm.get_mut_pixel(x, y).expect("guaranteed to be in bounds");
+            *pixel_ref = pixel;
         }
     }
 

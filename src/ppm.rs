@@ -37,15 +37,15 @@ impl Default for Pixel {
     }
 }
 
-pub struct PpmP3 {
+pub struct PpmImage {
     pub width: usize,
     pub height: usize,
     pixels: Vec<Pixel>,
 }
 
-impl PpmP3 {
+impl PpmImage {
     pub fn new(width: usize, height: usize) -> Self {
-        PpmP3 {
+        PpmImage {
             width,
             height,
             pixels: vec![Pixel::default(); width * height],
@@ -57,7 +57,7 @@ impl PpmP3 {
     }
 }
 
-impl Display for PpmP3 {
+impl Display for PpmImage {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         writeln!(f, "P3")?;
         writeln!(f, "{} {}", self.width, self.height)?;

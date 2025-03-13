@@ -1,25 +1,26 @@
+use crate::math::Scalar;
 use std::ops::{Add, Sub};
 
 #[derive(Debug, Copy, Clone, PartialOrd, PartialEq)]
 pub struct Vector2 {
-    pub x: f64,
-    pub y: f64,
+    pub x: Scalar,
+    pub y: Scalar,
 }
 
 impl Vector2 {
-    pub fn new(x: f64, y: f64) -> Vector2 {
+    pub fn new(x: Scalar, y: Scalar) -> Vector2 {
         Vector2 { x, y }
     }
 
-    pub fn scale(&self, scalar: f64) -> Vector2 {
+    pub fn scale(&self, scalar: Scalar) -> Vector2 {
         Vector2::new(self.x * scalar, self.y * scalar)
     }
 
-    pub fn euclidean_norm(&self) -> f64 {
+    pub fn euclidean_norm(&self) -> Scalar {
         (self.x * self.x + self.y * self.y).sqrt()
     }
 
-    pub fn dot_product(&self, rhs: Self) -> f64 {
+    pub fn dot_product(&self, rhs: Self) -> Scalar {
         self.x * rhs.x + self.y * rhs.y
     }
 }

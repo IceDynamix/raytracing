@@ -1,9 +1,9 @@
-use raytracer::ppm::{Pixel, PpmP3};
+use raytracer::ppm::{Pixel, PpmImage};
 use std::error::Error;
 
 fn main() -> Result<(), Box<dyn Error>> {
-    let mut ppm = PpmP3::new(3, 2);
-
+    let mut ppm = PpmImage::new(3, 2);
+    
     *ppm.get_mut_pixel(0, 0).unwrap() = Pixel::new(255, 0, 0);
     *ppm.get_mut_pixel(1, 0).unwrap() = Pixel::new(0, 255, 0);
     *ppm.get_mut_pixel(2, 0).unwrap() = Pixel::new(0, 0, 255);
