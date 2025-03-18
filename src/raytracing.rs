@@ -100,7 +100,12 @@ impl SceneObject for InfinitePlane {
         if angle == 0. {
             None
         } else {
-            Some((self.offset - camera.position.dot_product(&self.normal)) / angle)
+            let distance = (-self.offset - camera.position.dot_product(&self.normal)) / angle;
+            if distance < 0. {
+                None
+            } else {
+                Some(distance)
+            }
         }
     }
 
