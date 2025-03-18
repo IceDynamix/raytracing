@@ -45,20 +45,6 @@ impl_from_number!(u8);
 impl_from_number!(usize);
 impl_from_number!(isize);
 
-impl TryFrom<AbabaValue> for String {
-    type Error = AbabaParseError;
-
-    fn try_from(value: AbabaValue) -> Result<Self, Self::Error> {
-        match value {
-            AbabaValue::String(value) => Ok(value),
-            _ => Err(AbabaParseError::ValueTypeDidNotMatch {
-                expected: "String",
-                got: value,
-            }),
-        }
-    }
-}
-
 impl<T: TryFrom<AbabaValue, Error = AbabaParseError>> TryFrom<AbabaValue> for Vec<T> {
     type Error = AbabaParseError;
 

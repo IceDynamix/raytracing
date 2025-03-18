@@ -1,8 +1,13 @@
+//! tokenizer for the ababa config language. parses a string into [AbabaToken].
+//!
+//! tokens of note are [AbabaToken::Ident] and [AbabaToken::Number], both of which represent
+//! more than a single character. they specifically contain a reference to the passed in &str,
+//! which is why a lifetime annotation is necessary.
 use std::iter::Peekable;
 use std::str::CharIndices;
 
 #[derive(Debug, Eq, PartialEq)]
-pub(crate) enum AbabaToken<'a> {
+pub(crate) enum AbabaToken<'s> {
     LeftBrace,
     RightBrace,
     LeftBracket,
@@ -11,14 +16,14 @@ pub(crate) enum AbabaToken<'a> {
     RightParen,
     ListSeparator,  // comma
     FieldSeparator, // colon
-    Ident(&'a str),
-    Number(&'a str),
+    Ident(&'s str),
+    Number(&'s str),
     UnknownChar(char),
 }
 
-pub(crate) struct AbabaTokenizer<'a> {
-    s: &'a str,
-    inner: Peekable<CharIndices<'a>>,
+pub(crate) struct AbabaTokenizer<'s> {
+    s: &'s str,
+    inner: Peekable<CharIndices<'s>>,
 }
 
 impl<'a> AbabaTokenizer<'a> {

@@ -30,8 +30,8 @@ pub fn derive_deser_attr(input: TokenStream) -> TokenStream {
         .filter_map(|f| f.ident)
         .map(|f| {
             quote! {
-                #f: fields.remove(#f)
-                    .ok_or(ababa_config::AbabaParseError::StructFieldNotPresent { field: #f })?
+                #f: fields.remove(stringify!(#f))
+                    .ok_or(ababa_config::AbabaParseError::StructFieldNotPresent { field: stringify!(#f) })?
                     .try_into()?
             }
         })
@@ -49,13 +49,13 @@ pub fn derive_deser_attr(input: TokenStream) -> TokenStream {
                     } => {
                         if struct_type.as_ref().is_some_and(|t| t != stringify!(#struct_name)) {
                             return Err(ababa_config::AbabaParseError::StructTypeDidNotMatch {
-                                expected: #struct_name,
+                                expected: stringify!(#struct_name),
                                 got: struct_type,
                             });
                         }
 
                         Ok(Self {
-                            #(#each_field),*
+                            #(#each_field), *
                         })
                     }
                     _ => Err(ababa_config::AbabaParseError::ValueTypeDidNotMatch {

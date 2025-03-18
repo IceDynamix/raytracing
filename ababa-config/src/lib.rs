@@ -1,29 +1,36 @@
 //! ababa config language (my own)
-//! 
+//!
 //! this grammar is LL(1).
-//! 
+//!
 //! the input is parsed into tokens using [AbabaTokenizer] before being parsed by [AbabaParser]
-//! using recursive descent. this is implemented in the [TryFrom] trait.
-//! 
+//! into an AST of [AbabaValue] using recursive descent.
+//! this is implemented via the [TryFrom<String>] trait.
+//!
+//! the [TryFrom<AbabaValue>] trait is implemented for some types, such as all number types and vectors.
+//! please do use it when creating your own impls for your own types.
+//!
+//! you can use the `#[derive(AbabaDeserialize)]` macro (implemented in [ababa_config_proc]) to
+//! derive [TryFrom<String>] for your own structs. no guarantees though.
+//!
 //! ## grammar
-//! 
+//!
 //! ```txt
 //! config         ::= list | tuple | object | number
-//! 
-//! list           ::= '[' list-args 
+//!
+//! list           ::= '[' list-args
 //! list-args      ::= config ',' list-args | ']'
-//! 
+//!
 //! tuple          ::= '('
 //! tuple-args      ::= config ',' tuple-args| ')'
-//! 
-//! object         ::= ident '{' object-fields | '{' object-fields 
+//!
+//! object         ::= ident '{' object-fields | '{' object-fields
 //! object-fields  ::= ident ':' config ',' object-fields | '}'
 //!
 //! ident          ::= `[a-zA-Z_][0-9a-zA-Z-_]+`
-//! 
+//!
 //! number         ::= whatever rust uses honestly
 //! ```
-//! 
+//!
 //! - expressions using backticks are to be interpreted as regex
 //! - objects can optionally specify a type, but can leave it out
 use crate::parser::AbabaParser;
@@ -57,6 +64,10 @@ pub enum AbabaParseError {
     MissingEndBrace {
         brace: char,
     },
+    NotEnoughElements {
+        expected: i32,
+        got: usize,
+    },
 }
 
 impl Display for AbabaParseError {
@@ -70,8 +81,6 @@ impl Error for AbabaParseError {}
 #[derive(Debug, Clone)]
 pub enum AbabaValue {
     Number(f64),
-    String(String),
-    Bool(bool),
     Object {
         struct_type: Option<String>,
         fields: HashMap<String, AbabaValue>,
