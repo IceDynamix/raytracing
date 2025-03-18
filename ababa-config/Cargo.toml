@@ -1,0 +1,7 @@
+[package]
+name = "ababa-config"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ababa-config-proc = { path = "../ababa-config-proc" }
