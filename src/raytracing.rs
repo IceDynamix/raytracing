@@ -1,12 +1,13 @@
 use crate::math::Vector3;
 use crate::ppm::Pixel;
+use ababa_config_proc::AbabaDeserialize;
 
 pub trait SceneObject {
     fn intersects_ray(&self, camera: &Camera, ray: &Vector3) -> Option<f64>;
     fn material(&self) -> &Pixel;
 }
 
-#[derive(Debug)]
+#[derive(Debug, AbabaDeserialize)]
 pub struct Sphere {
     pub position: Vector3,
     pub radius: f64,
@@ -72,7 +73,7 @@ impl SceneObject for Sphere {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, AbabaDeserialize)]
 pub struct InfinitePlane {
     pub normal: Vector3,
     pub offset: f64,
@@ -114,7 +115,7 @@ impl SceneObject for InfinitePlane {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, AbabaDeserialize)]
 pub struct Camera {
     pub position: Vector3,
     pub up: Vector3,

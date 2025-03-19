@@ -1,4 +1,5 @@
 use crate::math::Scalar;
+use crate::ppm::Pixel;
 use std::ops::{Add, Div, Mul, Neg, Sub};
 
 #[derive(Debug, Copy, Clone, PartialOrd, PartialEq)]
@@ -82,5 +83,10 @@ impl Neg for Vector3 {
 impl Default for Vector3 {
     fn default() -> Self {
         Vector3::ZERO
+    }
+}
+impl From<Pixel> for Vector3 {
+    fn from(p: Pixel) -> Self {
+        Vector3::new(p.r as f64, p.g as f64, p.b as f64)
     }
 }
