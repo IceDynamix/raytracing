@@ -6,25 +6,8 @@ impl TryFrom<AbabaValue> for Vector3 {
     type Error = AbabaParseError;
 
     fn try_from(value: AbabaValue) -> Result<Self, Self::Error> {
-        match value {
-            AbabaValue::Tuple(t) => {
-                if t.len() < 3 {
-                    Err(AbabaParseError::NotEnoughElements {
-                        expected: 3,
-                        got: t.len(),
-                    })
-                } else {
-                    let x = t[0].clone().try_into()?;
-                    let y = t[1].clone().try_into()?;
-                    let z = t[2].clone().try_into()?;
-                    Ok(Vector3::new(x, y, z))
-                }
-            }
-            _ => Err(AbabaParseError::ValueTypeDidNotMatch {
-                expected: "String",
-                got: value,
-            }),
-        }
+        let (x, y, z) = value.try_into()?;
+        Ok(Vector3::new(x, y, z))
     }
 }
 
@@ -32,24 +15,7 @@ impl TryFrom<AbabaValue> for Pixel {
     type Error = AbabaParseError;
 
     fn try_from(value: AbabaValue) -> Result<Self, Self::Error> {
-        match value {
-            AbabaValue::Tuple(t) => {
-                if t.len() < 3 {
-                    Err(AbabaParseError::NotEnoughElements {
-                        expected: 3,
-                        got: t.len(),
-                    })
-                } else {
-                    let x = t[0].clone().try_into()?;
-                    let y = t[1].clone().try_into()?;
-                    let z = t[2].clone().try_into()?;
-                    Ok(Pixel::new(x, y, z))
-                }
-            }
-            _ => Err(AbabaParseError::ValueTypeDidNotMatch {
-                expected: "String",
-                got: value,
-            }),
-        }
+        let (r, g, b) = value.try_into()?;
+        Ok(Pixel::new(r, g, b))
     }
 }
