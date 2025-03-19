@@ -1,0 +1,28 @@
+Scene {
+	camera: {
+		position: (0.0, 0.0, -30.0),
+		up: (0.0, 1.0, 0.0),
+		right: (1.0, 0.0, 0.0),
+		forward: (0.0, 0.0, 1.0),
+		focal_distance: 10.0,
+		screen_width: 64,
+		screen_height: 48,
+	},
+	scene_objects: [
+		Sphere {
+			position: (0.0, 0.0, 0.0),
+			radius: 15.0,
+			material: (255, 255, 255),
+		},
+		Sphere {
+			position: (-10.0, 0.0, -12.5),
+			radius: 5.0,
+			material: (0, 255, 0),
+		},
+		InfinitePlane {
+			normal: (0.0, 1.0, 0.0),
+			offset: 10.,
+			material: (128, 128, 128),
+		},
+	],
+}
