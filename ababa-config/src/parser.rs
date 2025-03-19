@@ -1,10 +1,10 @@
 //! top-down parser using recursive descent
 
-use std::iter::Peekable;
 use crate::tokenizer::AbabaTokenizer;
 use crate::{AbabaParseError, AbabaValue};
+use std::iter::Peekable;
 
-pub(crate) struct AbabaParser<'a> {
+pub struct AbabaParser<'a> {
     _tokenizer: Peekable<AbabaTokenizer<'a>>,
 }
 

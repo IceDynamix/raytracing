@@ -60,3 +60,53 @@ impl<T: TryFrom<AbabaValue, Error = AbabaParseError>> TryFrom<AbabaValue> for Ve
         }
     }
 }
+
+impl<T: TryFrom<AbabaValue, Error = AbabaParseError>> TryFrom<AbabaValue> for (T, T) {
+    type Error = AbabaParseError;
+
+    fn try_from(value: AbabaValue) -> Result<Self, Self::Error> {
+        match value {
+            AbabaValue::Tuple(v) => {
+                if v.len() < 2 {
+                    Err(AbabaParseError::NotEnoughElements {
+                        expected: 2,
+                        got: v.len(),
+                    })
+                } else {
+                    Ok((v[0].to_owned().try_into()?, v[1].to_owned().try_into()?))
+                }
+            }
+            _ => Err(AbabaParseError::ValueTypeDidNotMatch {
+                expected: "Tuple",
+                got: value,
+            }),
+        }
+    }
+}
+
+impl<T: TryFrom<AbabaValue, Error = AbabaParseError>> TryFrom<AbabaValue> for (T, T, T) {
+    type Error = AbabaParseError;
+
+    fn try_from(value: AbabaValue) -> Result<Self, Self::Error> {
+        match value {
+            AbabaValue::Tuple(v) => {
+                if v.len() < 3 {
+                    Err(AbabaParseError::NotEnoughElements {
+                        expected: 3,
+                        got: v.len(),
+                    })
+                } else {
+                    Ok((
+                        v[0].to_owned().try_into()?,
+                        v[1].to_owned().try_into()?,
+                        v[2].to_owned().try_into()?,
+                    ))
+                }
+            }
+            _ => Err(AbabaParseError::ValueTypeDidNotMatch {
+                expected: "Tuple",
+                got: value,
+            }),
+        }
+    }
+}

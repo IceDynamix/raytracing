@@ -1,39 +1,81 @@
 //! ababa config language (my own)
 //!
-//! this grammar is LL(1).
-//!
-//! the input is parsed into tokens using [AbabaTokenizer] before being parsed by [AbabaParser]
-//! into an AST of [AbabaValue] using recursive descent.
-//! this is implemented via the [TryFrom<String>] trait.
-//!
-//! the [TryFrom<AbabaValue>] trait is implemented for some types, such as all number types and vectors.
-//! please do use it when creating your own impls for your own types.
-//!
-//! you can use the `#[derive(AbabaDeserialize)]` macro (implemented in [ababa_config_proc]) to
-//! derive [TryFrom<String>] for your own structs. no guarantees though.
+//! the input is parsed into tokens using [AbabaTokenizer], then parsed into an AST
+//! of [AbabaValue] with [AbabaParser].
 //!
 //! ## grammar
 //!
+//! this grammar is LL(1) and is parsed using recursive descent.
+//!
+//! - all whitespace is ignored
+//! - ε represents the empty string
+//! - text in single quotes represent literals, no quotes represent variables
+//! - expressions using backticks are to be interpreted as regex (although it's not used in this
+//!   project to stay true to the "no dependency" rule)
+//! - objects can optionally specify a type (ident), but it can be left out
+//! - idents do not start with a minus or a digit in order to differentiate from a number
+//! - lists, tuples and objects have optional trailing commas
+//! 
 //! ```txt
-//! config         ::= list | tuple | object | number
+//! value       ::= list | tuple | object | number
 //!
-//! list           ::= '[' list-args
-//! list-args      ::= config ',' list-args | ']'
+//! list        ::= '[' items ']'
+//! tuple       ::= '(' items ')'
 //!
-//! tuple          ::= '('
-//! tuple-args      ::= config ',' tuple-args| ')'
+//! items       ::= value item-cont
+//! items-cont  ::= ',' item | ',' | ε
 //!
-//! object         ::= ident '{' object-fields | '{' object-fields
-//! object-fields  ::= ident ':' config ',' object-fields | '}'
-//!
-//! ident          ::= `[a-zA-Z_][0-9a-zA-Z-_]+`
-//!
-//! number         ::= whatever rust uses honestly
+//! object      ::= ident '{' fields '}'
+//! fields      ::= ident ':' value field-cont
+//! fields-cont ::= ',' field | ',' | ε
+//! 
+//! ident       ::= `[a-zA-Z_][0-9a-zA-Z-_]+`
+//! number      ::= whatever rust uses honestly
 //! ```
 //!
-//! - expressions using backticks are to be interpreted as regex
-//! - objects can optionally specify a type, but can leave it out
-use crate::parser::AbabaParser;
+//! ## implementing your own deserialization
+//!
+//! the [TryFrom]<AbabaValue> trait is implemented for some types, such as all number types and vectors.
+//! please do use it when creating your own impls for your own types.
+//!
+//! you can use the `#[derive(AbabaDeserialize)]` macro (implemented in [ababa_config_proc]) to
+//! derive [TryFrom]<String> for your own structs. no guarantees though.
+//!
+//! ```
+//! use ababa_config::{AbabaParseError, AbabaValue};
+//!
+//! pub struct Vector3 {
+//!     pub x: f64,
+//!     pub y: f64,
+//!     pub z: f64,
+//! }
+//!
+//! impl TryFrom<AbabaValue> for Vector3 {
+//!     type Error = AbabaParseError;
+//!
+//!     fn try_from(value: AbabaValue) -> Result<Self, Self::Error> {
+//!         let (x, y, z) = value.try_into()?; // uses the TryFrom implementation of (f64, f64, f64)
+//!         Ok(Vector3 { x, y, z })
+//!     }
+//! }
+//! ```
+//!
+//! ```
+//! use ababa_config::{AbabaParser, AbabaValue};
+//! use ababa_config_proc::AbabaDeserialize;
+//!
+//! // generates TryFrom<AbabaValue> implementation!
+//! #[derive(AbabaDeserialize)]
+//! pub struct Ababa {
+//!     a: f64,
+//!     ba: i64,
+//! }
+//!
+//! // you can use the TryFrom<String> trait of AbabaValue, or use AbabaParser directly
+//! let s = "Ababa { a: 5.0, ba: 64 }".to_string();
+//! let a: Ababa = AbabaParser::new(&s).parse()?.try_into()?;
+//! ```
+pub use crate::parser::AbabaParser;
 use std::collections::HashMap;
 use std::error::Error;
 use std::fmt::{Display, Formatter};
